@@ -1,0 +1,57 @@
+{% extends 'base2.html' %}
+
+{% block content %}
+<main class="buying-container">
+    <div class="side-nav">
+        <div class="user-name">
+            {{ user.username }}
+        </div>
+        <a class="side-nav-card black-text" href="{% url 'buying_pending' %}">
+            <div class="side-nav-card-icon">
+                <i class="material-icons">add_shopping_cart</i>
+            </div>
+            <div class="side-nav-card-info">
+                <p class="side-nav-card-title">Buying</p>
+                <p class="side-nav-card-detail">In-Progress, Completed Orders</p>
+            </div>
+        </a>
+        <a class="side-nav-card black-text" href="{% url 'selling_listing' %}">
+            <div class="side-nav-card-icon">
+                <i class="material-icons">monetization_on</i>
+            </div>
+            <div class="side-nav-card-info">
+                <p class="side-nav-card-title">Selling</p>
+                <p class="side-nav-card-detail">Listing, In-Progress, Completed Sales</p>
+            </div>
+        </a>
+        <a class="side-nav-card black-text" href="{% url 'logout' %}">
+            <div class="side-nav-card-icon">
+                <i class="material-icons">exit_to_app</i>
+            </div>
+            <div class="side-nav-card-info">
+                <p class="side-nav-card-title">Log Out</p>
+            </div>
+        </a>
+    </div>
+    <div class="orders-container">
+        <div class="top-nav">
+            <a href="{% url 'buying_pending' %}" class="black-text">Pending</a>
+            <a href="{% url 'buying_history' %}">History</a>
+        </div>
+        <nav class="grey lighten-5">
+            <div class="nav-wrapper">
+                <form action="#!">
+                <div class="input-field">
+                    <input id="search" placeholder="Search name" type="search" required>
+                    <label class="label-icon" for="search"><i class="material-icons black-text">search</i></label>
+                    <i class="material-icons black-text">close</i>
+                </div>
+                </form>
+            </div>
+            </nav>
+    </div>
+</main>
+{% endblock %}
+
+
+
