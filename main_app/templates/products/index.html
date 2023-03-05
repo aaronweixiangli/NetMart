@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h4>Search Results</h4>
+
+{% for product in products %}
+    <a href="#" class="products-container">
+        <h2 class="products-title">{{ product.product.title }}</h2>
+        <div class="products-info">
+            <div class="products-image">
+                <img src={{ product.product.main_image }}>
+            </div>
+            <div class="products-detail">
+                <div class="products-brand">
+                    <p><span>Brand : </span>{{ product.product.brand }}</p>
+                </div>
+                <span>Features : </span> 
+                <ul class="products-feature">
+                    {% for feature in product.product.feature_bullets %}
+                    <li>• &nbsp {{ feature }}</li>
+                    {% endfor %}
+                </ul>
+                <div class="products-price">
+                    <p><span>Price : </span>${{ product.offers.primary.price }}</p>
+                </div>
+            </div>
+        </div>
+    </a>
+{% endfor %}
+<ul class="pagination">
+    <li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>
+    {% for i in num_of_pages %}
+    <li class="waves-effect" onclick="this.querySelector('form').submit();">
+        <a>
+            {{ i }}
+            <form action="{% url 'products_index' %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" value={{ search_term }} name="search_term">
+                <input type="hidden" value={{ type }} name="type">
+                <input type="hidden" value={{ sort_by }} name="sort_by">
+                <input type="hidden" value={{ i }} name="page">
+            </form>
+        </a>
+    </li>
+    {% endfor %}
+    <li class="waves-effect"><a href="#!"><i class="material-icons">chevron_right</i></a></li>
+</ul>
+
+{% endblock %}

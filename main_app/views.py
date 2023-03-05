@@ -1,6 +1,9 @@
 import uuid
 import boto3
 import os
+import requests
+import json
+import math
 from django.shortcuts import render, redirect
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
@@ -15,6 +18,9 @@ def home(request):
 
 def about(request):
   return render(request, 'about.html')
+
+def about_team(request):
+  return render(request, 'about_team.html')
 
 def signup(request):
   error_message = ''
@@ -33,3 +39,65 @@ def signup(request):
   context = {'form': form, 'error_message': error_message}
   return render(request, 'registration/signup.html', context)
 
+def products_index(request):
+  search_term = request.POST['search_term']
+  type = request.POST['type']
+  sort_by = request.POST['sort_by']
+  # set up the request parameters
+  params = {
+    'api_key': os.environ['API_KEY'],
+    'type': type,
+    'search_term': search_term,
+    'sort_by': sort_by,
+    'output': 'json'
+  }
+  # make the http GET request to RedCircle API
+  api_result = requests.get('https://api.redcircleapi.com/request', params).json()
+  all_products = api_result['search_results']
+
+  products_per_page = 10
+  current_page = int(request.POST['page'])
+  start_index = (current_page - 1) * products_per_page
+  end_index = start_index + products_per_page - 1
+  num_of_pages = math.ceil(len(all_products) / products_per_page)
+  num_of_pages_list = [x for x in range(1, num_of_pages + 1)]
+  products = all_products[start_index:end_index+1]
+  #Check if there is a next page
+  has_next_page = current_page * products_per_page < len(all_products)
+  #Check if there is a previous page
+  has_prev_page = current_page > 1
+
+  print(search_term)
+  print(type)
+  print(sort_by)
+  print(current_page)
+  return render(request, 'products/index.html', {
+    'products': products,
+    'search_term': search_term,
+    'type': type,
+    'sort_by': sort_by,
+    'page': current_page,
+    'num_of_pages': num_of_pages_list,
+    'has_next_page': has_next_page,
+    'has_prev_page': has_prev_page
+  })
+
+
+def buying_pending(request):
+  return render(request, 'users/buying_pending.html')
+
+
+def buying_history(request):
+  return render(request, 'users/buying_history.html')
+
+
+def selling_listing(request):
+  return render(request, 'users/selling_listing.html')
+
+
+def selling_pending(request):
+  return render(request, 'users/selling_pending.html')
+
+
+def selling_history(request):
+  return render(request, 'users/selling_history.html')
