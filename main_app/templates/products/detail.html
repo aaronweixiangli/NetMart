@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+<div class="detail-content-block">
+    <h4 style="font-weight: bold;">{{ product_api.title }}</h4>
+    <div class="product-info">
+        <div class="product-image">
+            <img src={{ product_api.main_image.link }}>
+        </div>
+        <div class="product-detail">
+            <p>Brand: {{ product_api.brand }}</p>
+            <p>Price: $ {{ product_api.buybox_winner.price.value }}</p>
+            <p>Features: </p>
+            <ul class="product-feature">
+                {% for feature in product_api.feature_bullets %}
+                <li>• &nbsp; {{ feature }}</li>
+                {% endfor %}
+            </ul>
+            <p>Target Link: <a href="{{ product_api.link }}">Link to Target</a></p>
+        </div>
+    </div>
+</div>
+<div class="detail-content-block">
+    <h5>More Images</h5>
+    <div class="product-images">
+        {% for image in product_api.images %}
+        <img src="{{ image.link }}">
+        {% endfor %}
+    </div>
+</div>
+<div class="detail-content-block">
+    <h5>Videos</h5>
+    <div class="product-videos">
+        {% for video in product_api.videos %}
+        <video width="448" height="252" controls>
+            <source src="{{ video.link }}" type="{{ video.type }}">
+        </video>
+        {% endfor %}
+    </div>
+</div>
+<div class="detail-content-block">
+    <h5>Selling</h5>
+    <div class="selling-items">
+        <a href="#" class="btn waves-effect waves-light grey lighten-3 black-text">Sell Your Used Goods Here
+            <i class="material-icons right">attach_money</i>
+        </a>
+        {% for item in product_db.item_set.all %}
+            <div>LIST INFO HERE</div>
+        {% empty %}
+            <div style="font-size: 18px;"> No Sellers Yet</div>
+        {% endfor %}
+    </div>
+</div>
+<div class="detail-content-block">
+    <h5>Price History</h5>
+    <div class="price-history-container">
+        {% for item in product_db.item_set.all %}
+        <div>LIST INFO HERE</div>
+        {% empty %}
+            <div style="font-size: 18px;"> No History Yet</div>
+        {% endfor %}
+    </div>
+</div>
+
+
+{% endblock %}
+  

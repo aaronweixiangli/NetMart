@@ -19,7 +19,7 @@
 </section>
 
 {% for product in products %}
-    <a href="#" class="products-container">
+    <a href="{% url 'products_detail' product.product.tcin %}" class="products-container">
         <h2 class="products-title">{{ product.product.title }}</h2>
         <div class="products-info">
             <div class="products-image">
@@ -45,7 +45,7 @@
 <ul class="pagination">
 
     <li class="{% if has_prev_page %}waves-effect{% else %}disabled{% endif %}">
-        <a href="{% url 'products_index' %}?search_term={{ search_term|urlencode }}&type={{ type }}&sort_by={{ sort_by }}&page={{ page|add:1 }}">
+        <a href="{% url 'products_index' %}?search_term={{ search_term|urlencode }}&type={{ type }}&sort_by={{ sort_by }}&page={{ page|sub:1 }}">
             <i class="material-icons">chevron_left</i>
         </a>
     </li>

@@ -12,6 +12,7 @@ from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from .models import BuyOrder, SalesOrder, SellerReview, WishList, Item, ItemPhoto, Product, ProductFeature 
 
 # Define the home view
 def home(request):
@@ -63,7 +64,7 @@ def products_index(request):
   # make the http GET request to RedCircle API
   api_result = requests.get('https://api.redcircleapi.com/request', params).json()
   all_products = api_result['search_results']
-  # pagination
+
   products_per_page = 10
   start_index = (current_page - 1) * products_per_page
   end_index = start_index + products_per_page - 1
@@ -74,6 +75,7 @@ def products_index(request):
   has_next_page = current_page * products_per_page < len(all_products)
   #Check if there is a previous page
   has_prev_page = current_page > 1
+
   print(search_term)
   print(type)
   print(sort_by)
@@ -88,6 +90,36 @@ def products_index(request):
     'has_next_page': has_next_page,
     'has_prev_page': has_prev_page
   })
+
+
+def products_detail(request, tcin):
+  params = {
+    'api_key': os.environ['API_KEY'],
+    'type': 'product',
+    'tcin': tcin,
+    'output': 'json'
+  }
+  api_result = requests.get('https://api.redcircleapi.com/request', params).json()
+  product_api = api_result['product']
+  try:
+    # try to retrieve the product instance from the database using the tcin
+    product_db = Product.objects.get(tcin=tcin)
+  except Product.DoesNotExist:
+    # if the product instance does not exist in the database, make the API request and create a new product instance
+    product_db = Product.objects.create(
+        tcin=product_api['tcin'],
+        title=product_api['title'],
+        brand=product_api['brand'],
+        price=product_api['buybox_winner']['price']['value'],
+        main_image=product_api['main_image']['link']
+    )
+    product_db.save()
+    # Create ProductFeature instances for this product_db
+    for feature in product_api['feature_bullets']:
+      product_feature = ProductFeature.objects.create(description=feature, product=product_db)
+      product_feature.save()
+  # render the template with the product instance
+  return render(request, 'products/detail.html', {'product_api': product_api, 'product_db': product_db})
 
 
 def buying_pending(request):
