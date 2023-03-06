@@ -191,6 +191,20 @@ footer.page-footer {
     color: slategray;
 }
 
+.active {
+    background-color:grey !important;
+}
+
+.filter-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.filter-select {
+    display: block;
+}
+
 .buying-container {
     display: grid;
     grid-template-columns: 1.7fr 10fr;

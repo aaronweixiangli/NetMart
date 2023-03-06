@@ -4,6 +4,7 @@ import os
 import requests
 import json
 import math
+from urllib.parse import unquote
 from django.shortcuts import render, redirect
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
@@ -40,9 +41,17 @@ def signup(request):
   return render(request, 'registration/signup.html', context)
 
 def products_index(request):
-  search_term = request.POST['search_term']
-  type = request.POST['type']
-  sort_by = request.POST['sort_by']
+  if request.method == 'POST':
+    search_term = request.POST['search_term']
+    type = request.POST['type']
+    sort_by = request.POST['sort_by']
+    current_page = int(request.POST['page'])
+  elif request.method == 'GET':
+    search_term = request.GET['search_term']
+    search_term = unquote(search_term)
+    type = request.GET['type']
+    sort_by = request.GET['sort_by']
+    current_page = int(request.GET['page'])
   # set up the request parameters
   params = {
     'api_key': os.environ['API_KEY'],
@@ -54,9 +63,8 @@ def products_index(request):
   # make the http GET request to RedCircle API
   api_result = requests.get('https://api.redcircleapi.com/request', params).json()
   all_products = api_result['search_results']
-
+  # pagination
   products_per_page = 10
-  current_page = int(request.POST['page'])
   start_index = (current_page - 1) * products_per_page
   end_index = start_index + products_per_page - 1
   num_of_pages = math.ceil(len(all_products) / products_per_page)
@@ -66,7 +74,6 @@ def products_index(request):
   has_next_page = current_page * products_per_page < len(all_products)
   #Check if there is a previous page
   has_prev_page = current_page > 1
-
   print(search_term)
   print(type)
   print(sort_by)
