@@ -1,10 +1,25 @@
 {% extends 'base.html' %}
+{% load mathfilters %}
 {% block content %}
 
-<h4>Search Results</h4>
+<section class="filter-section">
+    <h4>Search Results</h4>
+    <form id="filter-form" action="{% url 'products_index' %}" method="GET">
+        <select name="sort_by" class="filter-select" onchange="document.getElementById('filter-form').submit();">
+            <option value="best_match" {% if sort_by == "best_match" %} selected {% endif %}>Best Match</option>
+            <option value="price_high_to_low" {% if sort_by == "price_high_to_low" %} selected {% endif %}>Price High to Low</option>
+            <option value="price_low_to_high" {% if sort_by == "price_low_to_high" %} selected {% endif %}>Price Low to High</option>
+            <option value="newly_listed" {% if sort_by == "newly_listed" %} selected {% endif %}>Newly Listed</option>
+            <option value="featured" {% if sort_by == "featured" %} selected {% endif %}>Featured</option>
+        </select>
+        <input type="hidden" value="{{ search_term|urlencode }}" name="search_term">
+        <input type="hidden" value="{{ type }}" name="type">
+        <input type="hidden" value="1" name="page">
+    </form>
+</section>
 
 {% for product in products %}
-    <a href="#" class="products-container">
+    <a href="{% url 'products_detail' product.product.tcin %}" class="products-container">
         <h2 class="products-title">{{ product.product.title }}</h2>
         <div class="products-info">
             <div class="products-image">
@@ -28,22 +43,27 @@
     </a>
 {% endfor %}
 <ul class="pagination">
-    <li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>
+
+    <li class="{% if has_prev_page %}waves-effect{% else %}disabled{% endif %}">
+        <a href="{% url 'products_index' %}?search_term={{ search_term|urlencode }}&type={{ type }}&sort_by={{ sort_by }}&page={{ page|sub:1 }}">
+            <i class="material-icons">chevron_left</i>
+        </a>
+    </li>
+
     {% for i in num_of_pages %}
-    <li class="waves-effect" onclick="this.querySelector('form').submit();">
-        <a>
+    <li class="{% if i == page %}active{% else %}waves-effect{% endif %}">
+        <a href="{% url 'products_index' %}?search_term={{ search_term|urlencode }}&type={{ type }}&sort_by={{ sort_by }}&page={{ i }}">
             {{ i }}
-            <form action="{% url 'products_index' %}" method="POST">
-                {% csrf_token %}
-                <input type="hidden" value={{ search_term }} name="search_term">
-                <input type="hidden" value={{ type }} name="type">
-                <input type="hidden" value={{ sort_by }} name="sort_by">
-                <input type="hidden" value={{ i }} name="page">
-            </form>
         </a>
     </li>
     {% endfor %}
-    <li class="waves-effect"><a href="#!"><i class="material-icons">chevron_right</i></a></li>
+
+    <li class="{% if has_next_page %}waves-effect{% else %}disabled{% endif %}">
+        <a href="{% url 'products_index' %}?search_term={{ search_term|urlencode }}&type={{ type }}&sort_by={{ sort_by }}&page={{ page|add:1 }}">
+            <i class="material-icons">chevron_right</i>
+        </a>
+    </li>
+
 </ul>
 
 {% endblock %}
