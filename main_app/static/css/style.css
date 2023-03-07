@@ -298,6 +298,16 @@ footer.page-footer {
     color: #999999;
 }
 
+.items-container .btn-large {
+    width: 150px;
+}
+
+
+.item-edit-delete a {
+    width: 100px;
+    display: block;
+} 
+
 .detail-page-container {
     display: flex;
     flex-direction: column;

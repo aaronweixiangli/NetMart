@@ -120,10 +120,12 @@ def products_detail(request, tcin):
         main_image = product_api['main_image']['link']
     )
     product_db.save()
-    # Create ProductFeature instances for this product_db
-    for feature in product_api['feature_bullets']:
-      product_feature = ProductFeature.objects.create(description=feature, product=product_db)
-      product_feature.save()
+    features = product_api.get('feature_bullets')
+    if features:
+      # Create ProductFeature instances for this product_db
+      for feature in product_api['feature_bullets']:
+        product_feature = ProductFeature.objects.create(description=feature, product=product_db)
+        product_feature.save()
   # render the template with the product instance
   return render(request, 'products/detail.html', {'product_api': product_api, 'product_db': product_db})
 
@@ -173,6 +175,47 @@ def items_create(request, tcin):
 
 
 @login_required
+def items_edit(request, id):
+  item = Item.objects.get(id=id)
+  return render(request, 'items/update.html', {'item':item})
+
+
+@login_required
+def items_update(request, id):
+  # update the item instance
+  item = Item.objects.get(id=id)
+  item.sell_price = request.POST.get('sell_price')
+  item.item_description = request.POST.get('item_description')
+  item.save()
+  # update all item_photo instances that links to this item
+  photo_files = request.FILES.getlist('url')
+  # if there are photos uploaded, delete existing photos and create new ones
+  # otherwise, do nothing
+  if photo_files:
+    # Delete existing ItemPhotos for this item
+    item.itemphoto_set.all().delete()
+    for photo_file in photo_files:
+      if photo_file:
+        s3 = boto3.client('s3')
+        key = uuid.uuid4().hex[:6] + photo_file.name[photo_file.name.rfind('.'):]
+        try:
+          bucket = os.environ['S3_BUCKET']
+          s3.upload_fileobj(photo_file, bucket, key)
+          url = f"{os.environ['S3_BASE_URL']}{bucket}/{key}"
+          itemphoto = ItemPhoto.objects.create(url=url, item=item)
+          itemphoto.save()
+        except Exception as e:
+          print('An error occurred uploading file to S3')
+          print(e)
+  return redirect('selling_listing')
+
+
+class ItemDelete(LoginRequiredMixin, DeleteView):
+  model = Item
+  success_url = '/accounts/selling/listing'
+
+
+@login_required
 def buying_pending(request):
   return render(request, 'users/buying_pending.html')
 
@@ -184,14 +227,20 @@ def buying_history(request):
 
 @login_required
 def selling_listing(request):
-  return render(request, 'users/selling_listing.html')
+  sales_order = SalesOrder.objects.filter(user=request.user).first()
+  items = Item.objects.filter(sell_order=sales_order, status='listing').all()
+  return render(request, 'users/selling_listing.html', {'items': items})
 
 
 @login_required
 def selling_pending(request):
-  return render(request, 'users/selling_pending.html')
+  sales_order = SalesOrder.objects.filter(user=request.user).first()
+  items = Item.objects.filter(sell_order=sales_order, status='pending').all()
+  return render(request, 'users/selling_pending.html', {'items': items})
 
 
 @login_required
 def selling_history(request):
-  return render(request, 'users/selling_history.html')
+  sales_order = SalesOrder.objects.filter(user=request.user).first()
+  items = Item.objects.filter(sell_order=sales_order, status='complete').all()
+  return render(request, 'users/selling_history.html', {'items': items})
