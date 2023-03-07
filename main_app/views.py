@@ -25,6 +25,9 @@ def about(request):
 def about_team(request):
   return render(request, 'about_team.html')
 
+def about_technology(request):
+  return render(request, 'about_technology.html')
+
 def signup(request):
   error_message = ''
   if request.method == 'POST':
