@@ -41,13 +41,61 @@
     </div>
 </div>
 <div class="detail-content-block">
+    <h5>Product Details</h5>
+    <div class="product-details">
+        <div class="left-details">
+            <p><span>Dimensions:</span> {{ product_api.dimensions }}</p>
+            <p><span>Weight:</span> {{ product_api.weight }}</p>
+            <p><span>Specifications:</span></p>
+            <p>{{ product_api.specifications_flat }}</p>
+        </div>
+        <div class="right-details">
+            <p><span>Description: </span></p>
+            <p>{{ product_api.description }}</p>
+        </div>
+    </div>
+</div>
+<div class="detail-content-block">
     <h5>Selling</h5>
     <div class="selling-items">
-        <a href="#" class="btn waves-effect waves-light grey lighten-3 black-text">Sell Your Used Goods Here
+        <a href="{% url 'items_new' product_api.tcin %}" class="btn waves-effect waves-light grey lighten-3 black-text">Sell Your Used Goods Here
             <i class="material-icons right">attach_money</i>
         </a>
+        <table class="highlight centered">
+            <thead>
+                <tr>
+                    <th>Seller</th>
+                    <th>Date</th>
+                    <th>Item Price</th>
+                    <th>Item Description</th>
+                    <th>Photos</th>
+                    <th>Buy</th>
+                </tr>
+            </thead>
         {% for item in product_db.item_set.all %}
-            <div>LIST INFO HERE</div>
+            <tbody>
+                <tr>
+                    <td>{{ item.seller.username }}</td>
+                    <td>{{ item.date_created }}</td>
+                    <td>${{ item.sell_price }}</td>
+                    <td>{{ item.item_description }}</td>
+                    <td class="item-photos-container">
+                    {% for photo in item.itemphoto_set.all %}
+                        <div>
+                            <img src="{{ photo.url }} " class="item-photos">
+                        </div>
+                    {% endfor %}
+                    </td>
+                    <td>
+                        <form action="#" method="POST">
+                            <button class="btn-large waves-effect waves-light green darken-4" type="submit" name="action">Buy for ${{ item.sell_price }}
+                                <i class="material-icons right">shopping_basket</i>
+                              </button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
         {% empty %}
             <div style="font-size: 18px;"> No Sellers Yet</div>
         {% endfor %}
