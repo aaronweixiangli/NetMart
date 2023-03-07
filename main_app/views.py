@@ -174,8 +174,11 @@ def items_create(request, tcin):
       except Exception as e:
         print('An error occurred uploading file to S3')
         print(e)
-  return redirect('products_detail', tcin=tcin)
+  return redirect('items_create_confirm', id=item.id)
 
+def items_create_confirm(request, id):
+  item = Item.objects.get(id=id)
+  return render(request, 'items/seller_post_confirmation.html', {'item': item})
 
 @login_required
 def items_edit(request, id):
