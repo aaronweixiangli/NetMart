@@ -61,6 +61,7 @@
         <a href="{% url 'items_new' product_api.tcin %}" class="btn waves-effect waves-light grey lighten-3 black-text">Sell Your Used Goods Here
             <i class="material-icons right">attach_money</i>
         </a>
+        {% if product_db.item_set.all %}
         <table class="highlight centered">
             <thead>
                 <tr>
@@ -72,8 +73,8 @@
                     <th>Buy</th>
                 </tr>
             </thead>
-        {% for item in product_db.item_set.all %}
             <tbody>
+                {% for item in product_db.item_set.all %}
                 <tr>
                     <td>{{ item.seller.username }}</td>
                     <td>{{ item.date_created }}</td>
@@ -94,11 +95,12 @@
                         </form>
                     </td>
                 </tr>
+                {% endfor %}
             </tbody>
         </table>
-        {% empty %}
+        {% else %}
             <div style="font-size: 18px;"> No Sellers Yet</div>
-        {% endfor %}
+        {% endif %}
     </div>
 </div>
 <div class="detail-content-block">
