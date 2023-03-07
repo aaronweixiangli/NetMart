@@ -4,6 +4,7 @@ import os
 import requests
 import json
 import math
+from datetime import date
 from urllib.parse import unquote
 from django.shortcuts import render, redirect
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -33,6 +34,11 @@ def signup(request):
       user = form.save()
       # Automatically log in the new user
       login(request, user)
+      # create a BuyOrder and a SalesOrder instance for this user once sign up
+      buy_order = BuyOrder.objects.create(user=user)
+      sales_order = SalesOrder.objects.create(user=user)
+      buy_order.save()
+      sales_order.save()
       return redirect('/')
     else:
       error_message = 'Invalid sign up -try again'
@@ -107,11 +113,11 @@ def products_detail(request, tcin):
   except Product.DoesNotExist:
     # if the product instance does not exist in the database, make the API request and create a new product instance
     product_db = Product.objects.create(
-        tcin=product_api['tcin'],
-        title=product_api['title'],
-        brand=product_api['brand'],
-        price=product_api['buybox_winner']['price']['value'],
-        main_image=product_api['main_image']['link']
+        tcin = product_api['tcin'],
+        title = product_api['title'],
+        brand = product_api['brand'],
+        price = product_api['buybox_winner']['price']['value'],
+        main_image = product_api['main_image']['link']
     )
     product_db.save()
     # Create ProductFeature instances for this product_db
@@ -122,21 +128,70 @@ def products_detail(request, tcin):
   return render(request, 'products/detail.html', {'product_api': product_api, 'product_db': product_db})
 
 
+@login_required
+def items_new(request, tcin):
+  product = Product.objects.get(tcin=tcin)
+  return render(request, 'items/new.html', {'product': product})
+
+
+@login_required
+def items_create(request, tcin):
+  product = Product.objects.get(tcin=tcin)
+  item = Item.objects.create(
+    tcin = tcin,
+    title = product.title,
+    brand = product.brand,
+    sell_price = request.POST.get('sell_price'),
+    status = 'listing',
+    date_created = date.today(),
+    seller = request.user,
+    item_description = request.POST.get('item_description'),
+    sell_order = SalesOrder.objects.filter(user=request.user).first(),
+    product = product
+  )
+  item.save()
+  photo_files = request.FILES.getlist('url')
+  print(request.FILES)
+  print(photo_files)
+  for photo_file in photo_files:
+    if photo_file:
+      s3 = boto3.client('s3')
+      # Need a unique "key" (filename)
+      # It needs to keep the same file extension
+      # of the file that was uploaded (.png, .jpeg, etc)
+      key = uuid.uuid4().hex[:6] + photo_file.name[photo_file.name.rfind('.'):]
+      try:
+        bucket = os.environ['S3_BUCKET']
+        s3.upload_fileobj(photo_file, bucket, key)
+        url = f"{os.environ['S3_BASE_URL']}{bucket}/{key}"
+        itemphoto = ItemPhoto.objects.create(url=url, item=item)
+        itemphoto.save()
+      except Exception as e:
+        print('An error occurred uploading file to S3')
+        print(e)
+  return redirect('products_detail', tcin=tcin)
+
+
+@login_required
 def buying_pending(request):
   return render(request, 'users/buying_pending.html')
 
 
+@login_required
 def buying_history(request):
   return render(request, 'users/buying_history.html')
 
 
+@login_required
 def selling_listing(request):
   return render(request, 'users/selling_listing.html')
 
 
+@login_required
 def selling_pending(request):
   return render(request, 'users/selling_pending.html')
 
 
+@login_required
 def selling_history(request):
   return render(request, 'users/selling_history.html')
