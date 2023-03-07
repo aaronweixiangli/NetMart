@@ -462,4 +462,24 @@ footer.page-footer {
     width: 20%;
 }
 
+.about-technology-wrapper {
+    height: 100%;
+    width: 99.99vw;
+    background-image: url('https://i.imgur.com/fvfCyIr.jpg');
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+}
+
+.about-technology-card-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    padding-left: 50px;
+    padding-right: 50px;
+    gap: 5px;
+}
+
+.about-technology-title {
+    border-bottom: 1px solid gray;
+}
 
