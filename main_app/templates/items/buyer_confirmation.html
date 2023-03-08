@@ -2,15 +2,14 @@
 
 {% block content %}
 
-<div class="seller-detail-confirm-content-block">
+<div class="buyer-confirm-content-block">
   <div class="success-message">
-    <h2>Your post was successful!</h2>
+    <h2>Your order was successful!</h2>
   </div>
   <h4 style="font-weight: bold; text-align: center;">{{ item.title }}</h4> 
-      <div class="seller-confirmed-product-detail">
-          <p>Brand: {{ item.brand }}</p>
-          <p>Price: {{ item.sell_price }}</p>
-          <p>Posted: {{ item.date_created }}</p>
+      <div class="buyer-confirmed-product-detail">
+          <p>Purchased Price: {{ item.sell_price }}</p>
+          <p>Purchased Date: {{ date_bought }}</p> 
           <div class="item-photos-container">
             
             {% for photo in item.itemphoto_set.all %}
@@ -19,7 +18,7 @@
           </div>
       </div>
 </div>
-<div class="seller-detail-confirm-content-block">
+<div class="buyer-confirm-content-block">
   <a href="{% url 'products_detail' item.tcin %}" class="btn waves-effect waves-light grey lighten-3 black-text">See your Posting Here!</a>
 </div>
 
