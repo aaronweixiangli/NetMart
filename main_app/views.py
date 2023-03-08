@@ -129,9 +129,33 @@ def products_detail(request, tcin):
       for feature in product_api['feature_bullets']:
         product_feature = ProductFeature.objects.create(description=feature, product=product_db)
         product_feature.save()
-  # render the template with the product instance
-  return render(request, 'products/detail.html', {'product_api': product_api, 'product_db': product_db})
+  seen = set()
+  items_array = []
+  items_sold = product_db.item_set.filter(status='completed')
+  for item in items_sold:
+    date_sold = item.date_sold
+    if date_sold not in seen:
+      total_price = 0
+      items_completed_date = product_db.item_set.filter(status='completed', date_sold=date_sold)
+      for item in items_completed_date:
+        total_price += item.sell_price
+      avg_price = round(total_price / items_completed_date.count(), 2)
+      items_array.append((date_sold, avg_price, items_completed_date.count()))
+    seen.add(date_sold)
+  # sort the items array according to date_sold descendingly
+  sorted_items_array = sorted(items_array, key=lambda x:x[0], reverse=True)
+  print(sorted_items_array)
 
+  print(product_db.item_set.filter(status='listing'))
+  print(product_db.item_set.all())
+  return render(request, 'products/detail.html', {
+    'product_api': product_api, 
+    'product_db': product_db, 
+    'items_listing': product_db.item_set.filter(status='listing'),
+    'items_completed': product_db.item_set.filter(status='completed'),
+    'items_history': sorted_items_array
+    })
+                                                  
 
 @login_required
 def items_new(request, tcin):
@@ -176,9 +200,27 @@ def items_create(request, tcin):
         print(e)
   return redirect('items_create_confirm', id=item.id)
 
+
+@login_required
 def items_create_confirm(request, id):
   item = Item.objects.get(id=id)
   return render(request, 'items/seller_post_confirmation.html', {'item': item})
+
+
+@login_required
+def items_payment(request, id):
+  item = Item.objects.get(id=id)
+  return render(request, 'items/payment.html', {"item": item})
+
+
+@login_required
+def items_buy(request, id):
+  item = Item.objects.get(id=id)
+  buy_order = BuyOrder.objects.filter(user=request.user).first()
+  item.buy_order = buy_order
+  item.status = 'pending'
+  item.save()
+  return redirect('buying_pending')
 
 @login_required
 def items_edit(request, id):
@@ -216,6 +258,14 @@ def items_update(request, id):
   return redirect('selling_listing')
 
 
+def items_received(request,id):
+  item = Item.objects.get(id=id)
+  item.status = 'completed'
+  item.date_sold = date.today()
+  item.save()
+  return redirect('buying_pending')
+
+
 class ItemDelete(LoginRequiredMixin, DeleteView):
   model = Item
   success_url = '/accounts/selling/listing'
@@ -223,12 +273,16 @@ class ItemDelete(LoginRequiredMixin, DeleteView):
 
 @login_required
 def buying_pending(request):
-  return render(request, 'users/buying_pending.html')
+  buy_order = BuyOrder.objects.filter(user=request.user).first()
+  items = Item.objects.filter(buy_order=buy_order, status='pending').all()
+  return render(request, 'users/buying_pending.html', {'items': items})
 
 
 @login_required
 def buying_history(request):
-  return render(request, 'users/buying_history.html')
+  buy_order = BuyOrder.objects.filter(user=request.user).first()
+  items = Item.objects.filter(buy_order=buy_order, status='completed').all()
+  return render(request, 'users/buying_history.html', {'items': items})
 
 
 @login_required
@@ -248,5 +302,5 @@ def selling_pending(request):
 @login_required
 def selling_history(request):
   sales_order = SalesOrder.objects.filter(user=request.user).first()
-  items = Item.objects.filter(sell_order=sales_order, status='complete').all()
+  items = Item.objects.filter(sell_order=sales_order, status='completed').all()
   return render(request, 'users/selling_history.html', {'items': items})

@@ -48,9 +48,53 @@
                 </div>
                 </form>
             </div>
-            </nav>
+        </nav>
+        <div class="items-container">
+            {% if items %}
+            <table class="highlight centered">
+                <thead>
+                    <tr>
+                        <th>Date Posted</th>
+                        <th>Title</th>
+                        <th>Price</th>
+                        <th>Description</th>
+                        <th>Photos</th>
+                        <th>Seller</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td>{{ item.date_created }}</td>
+                        <th style="width:250px; font-weight: normal;" class="teal-text">{{ item.title }}</th>
+                        <td>${{ item.sell_price }}</td>
+                        <td sylte="width: 380px">{{ item.item_description }}</td>
+                        <td class="item-photos-container">
+                        {% for photo in item.itemphoto_set.all %}
+                            <div>
+                                <img src="{{ photo.url }} " class="item-photos">
+                            </div>
+                        {% endfor %}
+                        </td>
+                        <td>{{ item.sell_order.user.username }}</td>
+                        <td style="width: 300px;">
+                            <a href="{% url 'items_received' item.id %}">
+                                <button class="btn-large waves-effect waves-light grey darken-3" type="submit" name="action" style="width:250px; font-size: x-small;">Mark item as received
+                                    <i class="material-icons right grey darken-3">local_offer</i>
+                                </button>
+                            </a>           
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div style="font-size: 18px; margin: 30px 0 0 20px"> No Pending Items</div>
+            {% endif %}
+        </div>
     </div>
-</main>
+</main>        
 {% endblock %}
 
 

@@ -56,6 +56,7 @@
                 <thead>
                     <tr>
                         <th>Date Posted</th>
+                        <th>Title</th>
                         <th>Price</th>
                         <th>Description</th>
                         <th>Photos</th>
@@ -66,8 +67,9 @@
                     {% for item in items %}
                     <tr>
                         <td>{{ item.date_created }}</td>
+                        <th style="width:250px; font-weight: normal;" class="teal-text">{{ item.title }}</th>
                         <td>${{ item.sell_price }}</td>
-                        <td>{{ item.item_description }}</td>
+                        <td sylte="width: 380px">{{ item.item_description }}</td>
                         <td class="item-photos-container">
                         {% for photo in item.itemphoto_set.all %}
                             <div>
