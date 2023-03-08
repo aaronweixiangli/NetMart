@@ -486,3 +486,58 @@ footer.page-footer {
 .about-technology-title {
     border-bottom: 1px solid gray;
 }
+
+.item-photos-container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+.item-photos {
+    width: 25%;
+    height: auto;
+    margin: 0;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+
+.success-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #6cce6c;
+    border-radius: 50px; /* make the border-radius half the height of the element to create a 'stadium' shape */
+    color: lightgrey;
+    font-weight: bold;
+    font-size: 15px;
+    width: 66%;
+    margin: 0 auto;
+    text-align: center;
+    padding-bottom: 20px;
+}
+
+.seller-detail-confirm-content-block, .buyer-confirm-content-block {
+    margin-top: 50px; /* add margin to the top of the element */
+    display: flex; /* add display flex */
+    flex-direction: column; /* make child elements align vertically */
+    align-items: center; /* center content vertically */
+    margin-bottom: 2em; /* more room between this and the next element */
+}
+
+.seller-confirmed-product-detail, .buyer-confirmed-product-detail {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 50px;
+    
+}
+  
+.seller-confirmed-product-detail p, .buyer-confirmed-product-detail p {
+    flex-basis: 30%;
+    text-align: center;
+    margin: 0;
+    size: 300px;
+    font-size: 2em; /* twice as big */
+    margin-bottom: 2em; /* more room between this and the next element */
+}
