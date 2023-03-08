@@ -42,7 +42,7 @@ class Item(models.Model):
     seller_review = models.ForeignKey(SellerReview, on_delete=models.CASCADE, null=True, blank=True)
     product = models.ForeignKey('Product', on_delete=models.CASCADE)
     def __str__(self):
-        return f"Item Title:{self.title}; Buyer:{self.buy_order.user.username}; Seller:{self.seller.username}; Tcin:{self.tcin}"
+        return f"Item Title:{self.title}; Seller:{self.seller.username}; Tcin:{self.tcin}"
     class Meta:
         ordering = ['-date_created']
 

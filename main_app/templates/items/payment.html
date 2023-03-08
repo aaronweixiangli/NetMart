@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="form-container">
+    <h4 class="teal-text"> {{ item.title }}</h4>
+    <h5 style="margin-left: 170px; margin-bottom: 20px; margin-top: 30px;" class="teal-text">Price: ${{ item.sell_price }}</h5>
+    <h8 style="margin-left: 170px; margin-bottom: 50px;" class="teal-text">This payment page is for demonstration purposes only and will not charge your credit card.</h8>
+    <div class="row">
+        <form class="col s12" style="width: 50vw">
+          <div class="row">
+            <div class="input-field col s9">
+              <input placeholder="Card Number" type="text" class="validate">
+              <label>Card Number</label>
+            </div>
+            <div class="input-field col s3">
+              <input placeholder="CVV" type="text" class="validate">
+              <label>CVV</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s3">
+              <input placeholder="Expires" type="text" class="validate">
+              <label>Expires</label>
+            </div>
+          </div>
+          <h4> Billing Info </h4>
+          <div class="row">
+            <div class="input-field col s6">
+              <input placeholder="First Name" type="text" class="validate">
+              <label>First Name</label>
+            </div>
+            <div class="input-field col s6">
+              <input placeholder="Last Name" type="text" class="validate">
+              <label>Last Name</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s12">
+              <input placeholder="Address" type="text" class="validate">
+              <label>Address</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s12">
+              <input placeholder="Address 2" type="text" class="validate">
+              <label>Address 2</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s12">
+              <input placeholder="City" type="text" class="validate">
+              <label>City</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s6">
+              <input placeholder="State/Province/Region" type="text" class="validate">
+              <label>State/Province/Region</label>
+            </div>
+            <div class="input-field col s6">
+              <input placeholder="ZIP/Postal Code" type="text" class="validate">
+              <label>ZIP/Postal Code</label>
+            </div>
+            <div class="input-field col s6">
+                <input placeholder="Phone Number" type="text" class="validate">
+                <label>Phone Number</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s4">
+                <a href="{% url 'items_buy' item.id %}" class="btn waves-effect waves-light grey lighten-2 black-text">Submit Credit Card
+                    <i class="material-icons right">trending_flat</i>
+                </a>
+            </div>
+          </div>
+        </form>
+      </div>
+{% endblock %}
+  

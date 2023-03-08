@@ -34,7 +34,7 @@
     <h5>Videos</h5>
     <div class="product-videos">
         {% for video in product_api.videos %}
-        <video width="448" height="252" controls>
+        <video class="video" width="448" height="252" controls>
             <source src="{{ video.link }}" type="{{ video.type }}">
         </video>
         {% endfor %}
@@ -61,7 +61,7 @@
         <a href="{% url 'items_new' product_api.tcin %}" class="btn waves-effect waves-light grey lighten-3 black-text">Sell Your Used Goods Here
             <i class="material-icons right">attach_money</i>
         </a>
-        {% if product_db.item_set.all %}
+        {% if items_listing %}
         <table class="highlight centered">
             <thead>
                 <tr>
@@ -74,7 +74,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for item in product_db.item_set.all %}
+                {% for item in items_listing %}
                 <tr>
                     <td>{{ item.seller.username }}</td>
                     <td>{{ item.date_created }}</td>
@@ -88,11 +88,11 @@
                     {% endfor %}
                     </td>
                     <td>
-                        <form action="#" method="POST">
+                        <a href="{% url 'items_payment' item.id %}">
                             <button class="btn-large waves-effect waves-light green darken-4" type="submit" name="action">Buy for ${{ item.sell_price }}
                                 <i class="material-icons right">shopping_basket</i>
-                              </button>
-                        </form>
+                            </button>
+                        </a>
                     </td>
                 </tr>
                 {% endfor %}
@@ -103,14 +103,31 @@
         {% endif %}
     </div>
 </div>
-<div class="detail-content-block">
+<div class="detail-content-block" style="margin-top: 30px; margin-bottom: 150px;">
     <h5>Price History</h5>
     <div class="price-history-container">
-        {% for item in product_db.item_set.all %}
-        <div>LIST INFO HERE</div>
-        {% empty %}
-            <div style="font-size: 18px;"> No History Yet</div>
-        {% endfor %}
+    {% if items_completed %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Avg Price</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items_history %}
+                <tr>
+                    <td>{{ item.0 }}</td>
+                    <td>${{ item.1 }}</td>
+                    <td>{{ item.2 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div style="font-size: 18px;"> No History Yet</div>
+    {% endif %}
     </div>
 </div>
 

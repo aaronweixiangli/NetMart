@@ -368,6 +368,10 @@ footer.page-footer {
     margin: 25px 0 25px 0;
 }
 
+.video {
+    margin: 0 25px 15px 0;
+}
+
 .product-details {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -482,4 +486,3 @@ footer.page-footer {
 .about-technology-title {
     border-bottom: 1px solid gray;
 }
-
