@@ -39,7 +39,7 @@ class Item(models.Model):
     buy_order = models.ForeignKey(BuyOrder, on_delete=models.CASCADE, null=True, blank=True)
     sell_order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE, null=True, blank=True)
     seller_rating = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
-    seller_review = models.ForeignKey(SellerReview, on_delete=models.CASCADE, null=True, blank=True)
+    seller_review = models.ForeignKey(SellerReview, on_delete=models.SET_NULL, null=True, blank=True)
     product = models.ForeignKey('Product', on_delete=models.CASCADE)
     def __str__(self):
         return f"Item Title:{self.title}; Seller:{self.seller.username}; Tcin:{self.tcin}"

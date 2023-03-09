@@ -13,7 +13,7 @@ from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import BuyOrder, SalesOrder, SellerReview, WishList, Item, ItemPhoto, Product, ProductFeature 
+from .models import BuyOrder, SalesOrder, SellerReview, WishList, Item, ItemPhoto, Product, ProductFeature, User
 
 # Define the home view
 def home(request):
@@ -129,6 +129,7 @@ def products_detail(request, tcin):
       for feature in product_api['feature_bullets']:
         product_feature = ProductFeature.objects.create(description=feature, product=product_db)
         product_feature.save()
+  # get data for price history
   seen = set()
   items_array = []
   items_sold = product_db.item_set.filter(status='completed')
@@ -144,10 +145,6 @@ def products_detail(request, tcin):
     seen.add(date_sold)
   # sort the items array according to date_sold descendingly
   sorted_items_array = sorted(items_array, key=lambda x:x[0], reverse=True)
-  print(sorted_items_array)
-
-  print(product_db.item_set.filter(status='listing'))
-  print(product_db.item_set.all())
   return render(request, 'products/detail.html', {
     'product_api': product_api, 
     'product_db': product_db, 
@@ -178,6 +175,9 @@ def items_create(request, tcin):
     sell_order = SalesOrder.objects.filter(user=request.user).first(),
     product = product
   )
+  item.save()
+  seller_rating = sum([review.rating for review in item.seller.sellerreview_set.all()])
+  item.seller_rating = seller_rating
   item.save()
   photo_files = request.FILES.getlist('url')
   print(request.FILES)
@@ -230,11 +230,10 @@ def items_bought_confirm(request, id):
   return render(request, 'items/buyer_confirmation.html', {'item': item, 'date_bought': date_bought})
 
 
-
 @login_required
 def items_edit(request, id):
   item = Item.objects.get(id=id)
-  return render(request, 'items/update.html', {'item':item})
+  return render(request, 'items/edit.html', {'item':item})
 
 
 @login_required
@@ -281,6 +280,57 @@ class ItemDelete(LoginRequiredMixin, DeleteView):
 
 
 @login_required
+def reviews_new(request, id):
+  item = Item.objects.get(id=id)
+  return render(request, 'reviews/new.html', {'item': item})
+
+
+@login_required
+def reviews_create(request, id):
+  item = Item.objects.get(id=id)
+  rating = request.POST['rating']
+  review = request.POST['review']
+  seller_review = SellerReview.objects.create(rating=rating, review=review, user=item.seller)
+  seller_review.save()
+  item.seller_review = seller_review
+  item.save()
+  seller_rating = round(sum([review.rating for review in item.seller.sellerreview_set.all()]) / item.seller.sellerreview_set.all().count(), 2)
+  Item.objects.filter(seller=item.seller).update(seller_rating=seller_rating)
+  return redirect('buying_reviews')
+
+
+@login_required
+def reviews_edit(request, item_id, review_id):
+  item = Item.objects.get(id=item_id)
+  seller_review = SellerReview.objects.get(id=review_id)
+  return render(request, 'reviews/edit.html', {'item': item, 'review':seller_review})
+
+
+@login_required
+def reviews_update(request, item_id, review_id):
+  item = Item.objects.get(id=item_id)
+  seller_review = SellerReview.objects.get(id=review_id)
+  rating = request.POST['rating']
+  review = request.POST['review']
+  seller_review.rating = rating
+  seller_review.review = review
+  seller_review.save()
+  seller_rating = round(sum([review.rating for review in item.seller.sellerreview_set.all()]) / item.seller.sellerreview_set.all().count(), 2)
+  Item.objects.filter(seller=item.seller).update(seller_rating=seller_rating)
+  return redirect('buying_reviews')
+
+
+@login_required
+def reviews_delete(request, item_id, review_id):
+  seller_review = SellerReview.objects.get(id=review_id)
+  seller_review.delete()
+  item = Item.objects.get(id=item_id)
+  seller_rating = round(sum([review.rating for review in item.seller.sellerreview_set.all()]) / item.seller.sellerreview_set.all().count(), 2)
+  Item.objects.filter(seller=item.seller).update(seller_rating=seller_rating)
+  return redirect('buying_history')
+
+
+@login_required
 def buying_pending(request):
   buy_order = BuyOrder.objects.filter(user=request.user).first()
   items = Item.objects.filter(buy_order=buy_order, status='pending').all()
@@ -293,6 +343,13 @@ def buying_history(request):
   items = Item.objects.filter(buy_order=buy_order, status='completed').all()
   return render(request, 'users/buying_history.html', {'items': items})
 
+
+@login_required
+def buying_reviews(request):
+  buy_order = BuyOrder.objects.filter(user=request.user).first()
+  items = Item.objects.filter(buy_order=buy_order, status='completed', seller_review__isnull=False).all()
+  return render(request, 'users/buying_reviews.html', {'items': items})
+  
 
 @login_required
 def selling_listing(request):
@@ -313,3 +370,26 @@ def selling_history(request):
   sales_order = SalesOrder.objects.filter(user=request.user).first()
   items = Item.objects.filter(sell_order=sales_order, status='completed').all()
   return render(request, 'users/selling_history.html', {'items': items})
+
+@login_required
+def selling_reviews(request):
+  sales_order = SalesOrder.objects.filter(user=request.user).first()
+  items = Item.objects.filter(sell_order=sales_order, status='completed', seller_review__isnull=False).all()
+  return render(request, 'users/selling_reviews.html', {'items': items})
+
+
+def seller_reviews(request, id):
+  seller = User.objects.get(id=id)
+  sales_order = SalesOrder.objects.filter(user=seller).first()
+  items = Item.objects.filter(sell_order=sales_order, status='completed', seller_review__isnull=False).all()
+  seller_rating = round(sum([review.rating for review in seller.sellerreview_set.all()]) / seller.sellerreview_set.all().count(), 2)
+  return render(request, 'users/seller_reviews.html', {'items': items, 'seller': seller, 'seller_rating': seller_rating})
+
+
+def seller_listing(request, id):
+  seller = User.objects.get(id=id)
+  sales_order = SalesOrder.objects.filter(user=seller).first()
+  items = Item.objects.filter(sell_order=sales_order, status='listing').all()
+  seller_rating = round(sum([review.rating for review in seller.sellerreview_set.all()]) / seller.sellerreview_set.all().count(), 2)
+  return render(request, 'users/seller_listing.html', {'items': items, 'seller': seller, 'seller_rating': seller_rating})
+

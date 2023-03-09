@@ -4,15 +4,14 @@
 
     <div class="orders-container">
         <div class="top-nav">
-            <a href="{% url 'selling_listing' %}" class="black-text">Listing</a>
+            <a href="{% url 'selling_listing' %}">Listing</a>
             <a href="{% url 'selling_pending' %}">Pending</a>
             <a href="{% url 'selling_history' %}">History</a>
-            <a href="{% url 'selling_reviews' %}">Reviews</a>
+            <a href="{% url 'selling_reviews' %}" class="black-text">Reviews</a>
         </div>
         <nav class="grey lighten-5">
             <div class="nav-wrapper">
                 <form action="#!">
-                {% csrf_token %}
                 <div class="input-field">
                     <input id="search" placeholder="Search name" type="search" required>
                     <label class="label-icon" for="search"><i class="material-icons black-text">search</i></label>
@@ -26,50 +25,35 @@
             <table class="highlight centered">
                 <thead>
                     <tr>
-                        <th>Date Posted</th>
+                        <th>Date Completed</th>
                         <th>Title</th>
                         <th>Price</th>
                         <th>Description</th>
-                        <th>Photos</th>
-                        <th></th>
+                        <th>Buyer</th>
+                        <th>Rating</th>
+                        <th>Review</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for item in items %}
                     <tr>
-                        <td>{{ item.date_created }}</td>
+                        <td style="width:180px">{{ item.date_sold }}</td>
                         <th style="width:250px; font-weight: normal;" class="teal-text"><a href="{% url 'products_detail' item.tcin %}">{{ item.title }}</a></th>
                         <td>${{ item.sell_price }}</td>
                         <td sylte="width: 380px">{{ item.item_description }}</td>
-                        <td class="item-photos-container">
-                        {% for photo in item.itemphoto_set.all %}
-                            <div>
-                                <img src="{{ photo.url }} " class="item-photos">
-                            </div>
-                        {% endfor %}
-                        </td>
-                        <td class="item-edit-delete">
-                            <a href="{% url 'items_edit' item.id %}">
-                                <button class="btn-large waves-effect waves-light grey darken-3" type="submit" name="action" style="margin-bottom: 30px;">Edit
-                                    <i class="material-icons right grey darken-3">edit</i>
-                                </button>
-                            </a>
-                            <a href="{% url 'items_delete' item.id %}">
-                                <button class="btn-large waves-effect waves-light grey darken-3" type="submit" name="action">Delete
-                                    <i class="material-icons right grey darken-3">delete</i>
-                                </button>
-                            </a>                
-                        </td>
+                        <td>{{ item.buy_order.user.username }}</td>
+                        <td>{{ item.seller_review.rating }}</td>
+                        <td sylte="width: 380px">{{ item.seller_review.review }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
             {% else %}
-            <div style="font-size: 18px; margin: 30px 0 0 20px"> No Items Listed Yet</div>
+            <div style="font-size: 18px; margin: 30px 0 0 20px"> No Reviews From Buyers Yet</div>
             {% endif %}
         </div>
     </div>
-</main>
+</main>        
 {% endblock %}
 
 

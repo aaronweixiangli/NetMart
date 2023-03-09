@@ -1,13 +1,19 @@
-{% extends 'users_base.html' %}
+{% extends 'base2.html' %}
 
 {% block content %}
-
+<main class="buying-container">
+    <div class="side-nav">
+        <div class="user-name" style="margin-top:100px">Seller:
+            {{ seller.username }}
+        </div>
+        <div class="user-name">Average Rating:
+            {{ seller_rating }}
+        </div>
+    </div>
     <div class="orders-container">
         <div class="top-nav">
-            <a href="{% url 'selling_listing' %}" class="black-text">Listing</a>
-            <a href="{% url 'selling_pending' %}">Pending</a>
-            <a href="{% url 'selling_history' %}">History</a>
-            <a href="{% url 'selling_reviews' %}">Reviews</a>
+            <a href="{% url 'seller_reviews' seller.id %}">All Reviews</a>
+            <a href="{% url 'seller_listing' seller.id %}" class="black-text">All Current Listing</a>
         </div>
         <nav class="grey lighten-5">
             <div class="nav-wrapper">
@@ -31,14 +37,16 @@
                         <th>Price</th>
                         <th>Description</th>
                         <th>Photos</th>
-                        <th></th>
+                        <th>Buy</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for item in items %}
                     <tr>
                         <td>{{ item.date_created }}</td>
-                        <th style="width:250px; font-weight: normal;" class="teal-text"><a href="{% url 'products_detail' item.tcin %}">{{ item.title }}</a></th>
+                        <th style="width:250px; font-weight: normal;" class="teal-text">
+                            <a href="{% url 'products_detail' item.tcin %}">{{ item.title }}</a>
+                        </th>
                         <td>${{ item.sell_price }}</td>
                         <td sylte="width: 380px">{{ item.item_description }}</td>
                         <td class="item-photos-container">
@@ -48,17 +56,12 @@
                             </div>
                         {% endfor %}
                         </td>
-                        <td class="item-edit-delete">
-                            <a href="{% url 'items_edit' item.id %}">
-                                <button class="btn-large waves-effect waves-light grey darken-3" type="submit" name="action" style="margin-bottom: 30px;">Edit
-                                    <i class="material-icons right grey darken-3">edit</i>
+                        <td class="item-edit-delete" style="width:300px">
+                            <a href="{% url 'items_payment' item.id %}">
+                                <button class="btn-large waves-effect waves-light green darken-4" type="submit" name="action" style="width:250px;">Buy for ${{ item.sell_price }}
+                                    <i class="material-icons right green darken-4">shopping_basket</i>
                                 </button>
-                            </a>
-                            <a href="{% url 'items_delete' item.id %}">
-                                <button class="btn-large waves-effect waves-light grey darken-3" type="submit" name="action">Delete
-                                    <i class="material-icons right grey darken-3">delete</i>
-                                </button>
-                            </a>                
+                            </a>           
                         </td>
                     </tr>
                     {% endfor %}

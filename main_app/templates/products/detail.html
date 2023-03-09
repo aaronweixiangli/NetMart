@@ -66,6 +66,7 @@
             <thead>
                 <tr>
                     <th>Seller</th>
+                    <th>Rating(ouf of 5)</th>
                     <th>Date</th>
                     <th>Item Price</th>
                     <th>Item Description</th>
@@ -76,7 +77,10 @@
             <tbody>
                 {% for item in items_listing %}
                 <tr>
-                    <td>{{ item.seller.username }}</td>
+                    <td>
+                        <a href="{% url 'seller_reviews' item.seller_id %}">{{ item.seller.username }}</a>
+                    </td>
+                    <td>{{ item.seller_rating }} </td>
                     <td>{{ item.date_created }}</td>
                     <td>${{ item.sell_price }}</td>
                     <td>{{ item.item_description }}</td>
