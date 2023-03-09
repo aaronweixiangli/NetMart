@@ -220,7 +220,16 @@ def items_buy(request, id):
   item.buy_order = buy_order
   item.status = 'pending'
   item.save()
-  return redirect('buying_pending')
+  return redirect('items_bought_confirm', id=item.id)
+
+
+@login_required
+def items_bought_confirm(request, id):
+  item = Item.objects.get(id=id)
+  date_bought = date.today()
+  return render(request, 'items/buyer_confirmation.html', {'item': item, 'date_bought': date_bought})
+
+
 
 @login_required
 def items_edit(request, id):

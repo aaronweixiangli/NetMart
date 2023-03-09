@@ -3,17 +3,20 @@
 {% block content %}
 
 <div class="seller-detail-confirm-content-block">
-  <h2>Your post was successful!</h2>  
-  <h4 style="font-weight: bold;">{{ item.title }} has been posted</h4> 
+  <div class="success-message">
+    <h2>Your post was successful!</h2>
+  </div>
+  <h4 style="font-weight: bold; text-align: center;">{{ item.title }}</h4> 
       <div class="seller-confirmed-product-detail">
           <p>Brand: {{ item.brand }}</p>
           <p>Price: {{ item.sell_price }}</p>
           <p>Posted: {{ item.date_created }}</p>
-          {% for photo in item.itemphoto_set.all %}
-          <div>
-            <p>Photos:</p><img src="{{ photo.url }} " class="item-photos">
+          <div class="item-photos-container">
+            
+            {% for photo in item.itemphoto_set.all %}
+              <img src="{{ photo.url }} " class="item-photos">
+            {% endfor %}         
           </div>
-          {% endfor %}         
       </div>
 </div>
 <div class="seller-detail-confirm-content-block">
@@ -21,4 +24,3 @@
 </div>
 
 {% endblock %}
-  

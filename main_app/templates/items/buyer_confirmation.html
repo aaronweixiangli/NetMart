@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="buyer-confirm-content-block">
+  <div class="success-message">
+    <h2>Your order was successful!</h2>
+  </div>
+  <h4 style="font-weight: bold; text-align: center;">{{ item.title }}</h4> 
+      <div class="buyer-confirmed-product-detail">
+          <p>Purchased Price: {{ item.sell_price }}</p>
+          <p>Purchased Date: {{ date_bought }}</p> 
+          <div class="item-photos-container">
+            
+            {% for photo in item.itemphoto_set.all %}
+              <img src="{{ photo.url }} " class="item-photos">
+            {% endfor %}         
+          </div>
+      </div>
+</div>
+<div class="buyer-confirm-content-block">
+  <a href="{% url 'buying_pending' %}" class="btn waves-effect waves-light grey lighten-3 black-text">See your Order Here!</a>
+</div>
+
+{% endblock %}
