@@ -75,6 +75,14 @@ Follow the easy to do steps to get started to sell your used gold here at NetMar
 6. Fill out the respective `confirmation page`
 7. Congratulations you have offically placed your first buy or sell order with NetMart!
 
+## :world_map: Design
+
+<details closed>
+  <summary> Entity Relationship Diagram (ERD) </summary>
+  <a href="https://user-images.githubusercontent.com/31415907/223964365-755bf9c4-04df-4a39-8586-38ff6b967fa0.png"
+    > ERD</a>
+</details>
+
 <details closed>
   <summary> Trello Board </summary>
   <a href="https://trello.com/b/vaJOtJF7/project-3-net-mart"
