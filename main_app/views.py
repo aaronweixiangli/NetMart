@@ -4,7 +4,7 @@ import os
 import requests
 import json
 import math
-from datetime import date
+from datetime import date, timedelta
 from urllib.parse import unquote
 from django.shortcuts import render, redirect
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -227,7 +227,13 @@ def items_buy(request, id):
 def items_bought_confirm(request, id):
   item = Item.objects.get(id=id)
   date_bought = date.today()
-  return render(request, 'items/buyer_confirmation.html', {'item': item, 'date_bought': date_bought})
+  arrival_date = date.today() + timedelta(days=7)
+  day_month_arrival = arrival_date.strftime('%B %d')
+  return render(request, 'items/buyer_confirmation.html', {
+    'item': item, 
+    'date_bought': date_bought, 
+    'day_month_arrival': day_month_arrival
+    })
 
 
 @login_required
