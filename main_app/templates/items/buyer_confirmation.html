@@ -8,8 +8,9 @@
   </div>
   <h4 style="font-weight: bold; text-align: center;">{{ item.title }}</h4> 
       <div class="buyer-confirmed-product-detail">
-          <p>Purchased Price: {{ item.sell_price }}</p>
-          <p>Purchased Date: {{ date_bought }}</p> 
+          <p>Price: {{ item.sell_price }}</p>
+          <p>Description: {{ item.item_description }}</p> 
+          <p>Estimated Delivery: Your item will arrive by {{ day_month_arrival }}</p> 
           <div class="item-photos-container">
             
             {% for photo in item.itemphoto_set.all %}

@@ -535,7 +535,7 @@ footer.page-footer {
     text-align: center;
     margin: 0;
     size: 300px;
-    font-size: 2em; /* twice as big */
+    font-size: 1.5em; /* twice as big */
     margin-bottom: 2em; /* more room between this and the next element */
 }
 
