@@ -214,6 +214,10 @@ footer.page-footer {
     background: white;
 }
 
+.nav-icons {
+    background-color: rgb(235, 235, 235) !important;
+}
+
 .side-nav {
     display: flex;
     flex-direction: column;
@@ -487,19 +491,13 @@ footer.page-footer {
     border-bottom: 1px solid gray;
 }
 
-.item-photos-container {
-    display: flex;
-    flex-wrap: wrap;
-  }
-
-.item-photos {
+.buyer-confirm-content-block .item-photos, .seller-detail-confirm-content-block .item-photos {
     width: 25%;
     height: auto;
     margin: 0;
     padding: 5px;
     box-sizing: border-box;
 }
-
 
 .success-message {
     display: flex;
@@ -530,7 +528,6 @@ footer.page-footer {
     justify-content: space-between;
     align-items: center;
     margin-top: 50px;
-    
 }
   
 .seller-confirmed-product-detail p, .buyer-confirmed-product-detail p {
@@ -540,4 +537,29 @@ footer.page-footer {
     size: 300px;
     font-size: 2em; /* twice as big */
     margin-bottom: 2em; /* more room between this and the next element */
+}
+
+#review-main {
+    height: 100%;
+    display: flex !important;
+    justify-content: center;
+}
+
+#review-main h3 {
+    border-bottom: 1px solid rgba(0,0,0,0.2);
+    padding-bottom: 30px;
+}
+
+#add-review-form {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+}
+
+#review-content {
+    height: 200px;
+    background-color: white;
+    padding: 10px;
+    font-size: 20px;
+    margin-bottom: 30px;
 }

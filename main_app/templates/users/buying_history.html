@@ -1,42 +1,12 @@
-{% extends 'base2.html' %}
+{% extends 'users_base.html' %}
 
 {% block content %}
-<main class="buying-container">
-    <div class="side-nav">
-        <div class="user-name">
-            {{ user.username }}
-        </div>
-        <a class="side-nav-card black-text" href="{% url 'buying_pending' %}">
-            <div class="side-nav-card-icon">
-                <i class="material-icons">add_shopping_cart</i>
-            </div>
-            <div class="side-nav-card-info">
-                <p class="side-nav-card-title">Buying</p>
-                <p class="side-nav-card-detail">In-Progress, Completed Orders</p>
-            </div>
-        </a>
-        <a class="side-nav-card black-text" href="{% url 'selling_listing' %}">
-            <div class="side-nav-card-icon">
-                <i class="material-icons">monetization_on</i>
-            </div>
-            <div class="side-nav-card-info">
-                <p class="side-nav-card-title">Selling</p>
-                <p class="side-nav-card-detail">Listing, In-Progress, Completed Sales</p>
-            </div>
-        </a>
-        <a class="side-nav-card black-text" href="{% url 'logout' %}">
-            <div class="side-nav-card-icon">
-                <i class="material-icons">exit_to_app</i>
-            </div>
-            <div class="side-nav-card-info">
-                <p class="side-nav-card-title">Log Out</p>
-            </div>
-        </a>
-    </div>
+
     <div class="orders-container">
         <div class="top-nav">
             <a href="{% url 'buying_pending' %}">Pending</a>
             <a href="{% url 'buying_history' %}" class="black-text">History</a>
+            <a href="{% url 'buying_reviews' %}">Reviews</a>
         </div>
         <nav class="grey lighten-5">
             <div class="nav-wrapper">
@@ -61,13 +31,14 @@
                         <th>Photos</th>
                         <th>Seller</th>
                         <th>Date Completed</th>
+                        <th style="width:220px">Review</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for item in items %}
                     <tr>
                         <td>{{ item.date_created }}</td>
-                        <th style="width:250px; font-weight: normal;" class="teal-text">{{ item.title }}</th>
+                        <th style="width:250px; font-weight: normal;" class="teal-text"><a href="{% url 'products_detail' item.tcin %}">{{ item.title }}</a></th>
                         <td>${{ item.sell_price }}</td>
                         <td sylte="width: 380px">{{ item.item_description }}</td>
                         <td class="item-photos-container">
@@ -79,6 +50,28 @@
                         </td>
                         <td>{{ item.sell_order.user.username }}</td>
                         <td>{{ item.date_sold }}</td>
+                        {% if item.seller_review %}
+                        <td>
+                            <a href="{% url 'reviews_edit' item.id item.seller_review_id %}">
+                                <button class="btn-large waves-effect waves-light grey darken-3" type="submit" name="action" style="margin-bottom: 30px; width:200px; font-size: x-small;">Edit Review
+                                    <i class="material-icons right grey darken-3">edit</i>
+                                </button>
+                            </a>
+                            <a href="{% url 'reviews_delete' item.id item.seller_review_id %}">
+                                <button class="btn-large waves-effect waves-light grey darken-3" type="submit" name="action" style="width:200px; font-size: x-small;">Delete Review
+                                    <i class="material-icons right grey darken-3">delete</i>
+                                </button>
+                            </a>   
+                        </td>
+                        {% else %}
+                        <td>
+                            <a href="{% url 'reviews_new' item.id %}">
+                                <button class="btn-large waves-effect waves-light grey darken-3" type="submit" name="action" style="width:200px; font-size: x-small;">Write a Review
+                                    <i class="material-icons right grey darken-3">rate_review</i>
+                                </button>
+                            </a>    
+                        </td>
+                        {% endif %}
                     </tr>
                     {% endfor %}
                 </tbody>

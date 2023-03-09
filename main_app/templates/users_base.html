@@ -1,0 +1,122 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Net Mart</title>
+    <link rel="shortcut icon" href="https://i.imgur.com/Ikd3AA0.png" type="image/x-icon">    
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</head>
+<body>
+    <header class="navbar-fixed">
+        <ul id="dropdown1" class="dropdown-content">
+            <li><a href="{% url 'buying_pending' %}">
+                <div class="card grey lighten-2">
+                <div class="card-content black-text">
+                    <span class="card-title">Buying</span>
+                    <p>In-Progress, Completed Orders</p>
+                </div>
+                </div>
+            </a></li>
+            <li class="divider"></li>
+            <li><a href="{% url 'selling_listing' %}">
+                <div class="card grey lighten-2">
+                <div class="card-content black-text">
+                    <span class="card-title">Selling</span>
+                    <p>Listing, In-Progress, Completed Sales</p>
+                </div>
+                </div>
+            </a></li>
+            <li class="divider"></li>
+            <li><a href="{% url 'logout' %}" class="grey-text text-darken-4 ">Log Out</a></li>
+        </ul>
+        <nav>
+            <div class="nav-wrapper grey lighten-2">
+                <ul>
+                    <li><a href="{% url 'home' %}" class="left brand-logo black-text logo-container">
+                        <img src="https://i.imgur.com/Ikd3AA0.png" alt="logo" id="logo-netmart">
+                    </a></li>
+                </ul>
+                <div>
+                    <form class="search-bar center brand-logo" action="{% url 'products_index' %}" method="POST">
+                        {% csrf_token %}
+                        <i class="material-icons">search</i>
+                        <input type="text" placeholder="product name" name="search_term">
+                        <input type="hidden" value="search" name="type">
+                        <input type="hidden" value="best_match" name="sort_by">
+                        <input type="hidden" value="1" name="page">
+                        <button type="submit" class="search-bar-submit">Search</button>
+                    </form>
+                </div>
+                <ul class="right">
+                  <li><a href="{% url 'about' %}" class="black-text">About</a></li>
+                  <li><a href="{% url 'about_team' %}" class="black-text">Our Team</a></li>
+                  {% if user.is_authenticated %}
+                  <li><a class="dropdown-trigger black-text" data-target="dropdown1" style="border:none">{{user.username}}<i class="material-icons right">person_pin</i></a></li>
+                  {% else %}
+                  <li><a href="{% url 'signup' %}" class="black-text">Sign Up</a></li>
+                  <li><a href="{% url 'login' %}" class="black-text">Log In</a></li>
+                  {% endif %}
+                </ul>
+            </div>
+        </nav>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var elems = document.querySelectorAll('.dropdown-trigger');
+                var options = {
+                    hover: true,
+                    coverTrigger: false,
+                    constrainWidth: false
+                }
+                var instances = M.Dropdown.init(elems, options);
+            });
+        </script>
+    </header>
+
+<main class="buying-container">
+    <div class="side-nav">
+        <div class="user-name">
+            {{ user.username }}
+        </div>
+        <a class="side-nav-card black-text" href="{% url 'buying_pending' %}">
+            <div class="side-nav-card-icon">
+                <i class="material-icons nav-icons">add_shopping_cart</i>
+            </div>
+            <div class="side-nav-card-info">
+                <p class="side-nav-card-title">Buying</p>
+                <p class="side-nav-card-detail">In-Progress, Completed Orders</p>
+            </div>
+        </a>
+        <a class="side-nav-card black-text" href="{% url 'selling_listing' %}">
+            <div class="side-nav-card-icon">
+                <i class="material-icons nav-icons">monetization_on</i>
+            </div>
+            <div class="side-nav-card-info">
+                <p class="side-nav-card-title">Selling</p>
+                <p class="side-nav-card-detail">Listing, In-Progress, Completed Sales</p>
+            </div>
+        </a>
+        <a class="side-nav-card black-text" href="{% url 'logout' %}">
+            <div class="side-nav-card-icon">
+                <i class="material-icons nav-icons">exit_to_app</i>
+            </div>
+            <div class="side-nav-card-info">
+                <p class="side-nav-card-title">Log Out</p>
+            </div>
+        </a>
+    </div>
+    {% block content %}
+    {% endblock %}
+
+    <footer class="page-footer grey lighten-2">
+        <div class="right black-text">All Rights Reserved, &copy; 2023 Net Mart &nbsp;</div>
+     </footer>
+ 
+ </body>
+ </html>
