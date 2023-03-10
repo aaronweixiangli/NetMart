@@ -57,6 +57,7 @@
                 <ul class="right">
                   <li><a href="{% url 'about' %}" class="black-text">About</a></li>
                   <li><a href="{% url 'about_team' %}" class="black-text">Our Team</a></li>
+                  <li><a href="{% url 'about_technology' %}" class="black-text">Technology</a></li>
                   {% if user.is_authenticated %}
                   <li><a class="dropdown-trigger black-text" data-target="dropdown1" style="border:none">{{user.username}}<i class="material-icons right">person_pin</i></a></li>
                   {% else %}

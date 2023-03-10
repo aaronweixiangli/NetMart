@@ -19,6 +19,8 @@
                 {% endfor %}
             </ul>
             <p>Target Link: <a href="{{ product_api.link }}">Link to Target</a></p>
+            <p>Favorite: <a href="{% url 'products_favorite' product_api.tcin %}" class="btn-flat btn-small waves-effect waves-light yellow">Add</a>
+            </p>
         </div>
     </div>
 </div>
@@ -80,7 +82,13 @@
                     <td>
                         <a href="{% url 'seller_reviews' item.seller_id %}">{{ item.seller.username }}</a>
                     </td>
-                    <td>{{ item.seller_rating }} </td>
+                    <td>
+                        {% if item.seller_rating == 0 %}
+                        No Ratings
+                        {% else %}                        
+                        {{ item.seller_rating }} 
+                        {% endif %}
+                    </td>
                     <td>{{ item.date_created }}</td>
                     <td>${{ item.sell_price }}</td>
                     <td>{{ item.item_description }}</td>

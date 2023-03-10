@@ -6,8 +6,8 @@
         <div class="top-nav">
             <a href="{% url 'buying_pending' %}">Pending</a>
             <a href="{% url 'buying_history' %}">History</a>
-            <a href="{% url 'buying_reviews' %}" class="black-text">Reviews</a>
-            <a href="{% url 'buying_wishlist' %}">Wish List</a>
+            <a href="{% url 'buying_reviews' %}">Reviews</a>
+            <a href="{% url 'buying_wishlist' %}" class="black-text">Wish List</a>
         </div>
         <nav class="grey lighten-5">
             <div class="nav-wrapper">
@@ -20,36 +20,30 @@
                 </form>
             </div>
         </nav>
-        <div class="items-container">
-            {% if items %}
+        <div class="wishlist-container">
+            {% if products %}
             <table class="highlight centered">
                 <thead>
                     <tr>
-                        <th>Date Completed</th>
                         <th>Title</th>
+                        <th>Brand</th>
                         <th>Price</th>
-                        <th>Description</th>
-                        <th>Seller</th>
-                        <th>Rating</th>
-                        <th>Review</th>
+                        <th>Main Image</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for item in items %}
+                    {% for product in products %}
                     <tr>
-                        <td style="width:180px">{{ item.date_sold }}</td>
-                        <th style="width:250px; font-weight: normal;" class="teal-text"><a href="{% url 'products_detail' item.tcin %}">{{ item.title }}</a></th>
-                        <td>${{ item.sell_price }}</td>
-                        <td sylte="width: 380px">{{ item.item_description }}</td>
-                        <td>{{ item.sell_order.user.username }}</td>
-                        <td>{{ item.seller_review.rating }}</td>
-                        <td sylte="width: 380px">{{ item.seller_review.review }}</td>
+                        <td style="width:250px; font-weight: normal;" class="teal-text"><a href="{% url 'products_detail' product.tcin %}">{{ product.title }}</a></td>
+                        <td>{{ product.brand }}</td>
+                        <td sylte="width: 380px">${{ product.price }}</td>
+                        <td><img src="{{product.main_image}}" style="height: 250px;"></td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
             {% else %}
-            <div style="font-size: 18px; margin: 30px 0 0 20px"> No Reviews Written Yet</div>
+            <div style="font-size: 18px; margin: 30px 0 0 20px"> No Items In Wish List Yet</div>
             {% endif %}
         </div>
     </div>
