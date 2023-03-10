@@ -326,7 +326,10 @@ def reviews_delete(request, item_id, review_id):
   seller_review = SellerReview.objects.get(id=review_id)
   seller_review.delete()
   item = Item.objects.get(id=item_id)
-  seller_rating = round(sum([review.rating for review in item.seller.sellerreview_set.all()]) / item.seller.sellerreview_set.all().count(), 2)
+  if item.seller.sellerreview_set.all().count():
+    seller_rating = round(sum([review.rating for review in item.seller.sellerreview_set.all()]) / item.seller.sellerreview_set.all().count(), 2)
+  else:
+    seller_rating = None
   Item.objects.filter(seller=item.seller).update(seller_rating=seller_rating)
   return redirect('buying_history')
 
