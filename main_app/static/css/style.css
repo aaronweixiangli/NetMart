@@ -481,7 +481,7 @@ footer.page-footer {
 
 .about-technology-card-container {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     padding-left: 50px;
     padding-right: 50px;
     gap: 5px;
