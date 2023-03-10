@@ -141,12 +141,14 @@ def products_detail(request, tcin):
     seen.add(date_sold)
   # sort the items array according to date_sold descendingly
   sorted_items_array = sorted(items_array, key=lambda x:x[0], reverse=True)
+  user = request.user
   return render(request, 'products/detail.html', {
     'product_api': product_api, 
     'product_db': product_db, 
     'items_listing': product_db.item_set.filter(status='listing'),
     'items_completed': product_db.item_set.filter(status='completed'),
-    'items_history': sorted_items_array
+    'items_history': sorted_items_array,
+    'user': user
     })
                                                   
 
@@ -407,9 +409,14 @@ def seller_listing(request, id):
 def products_favorite(request, tcin):
     product = Product.objects.get(tcin=tcin)
     wishlist = request.user.wishlist_set.first()
-    wishlist.product.add(product)
-    wishlist.save()
-    return redirect('products_detail', tcin=tcin)
+    if product in request.user.wishlist_set.first().product.all():
+      wishlist.product.remove(product)
+      wishlist.save()
+      return redirect('buying_wishlist')
+    else:
+      wishlist.product.add(product)
+      wishlist.save()
+      return redirect('products_detail', tcin=tcin)
 
 @login_required
 def buying_wishlist(request):  

@@ -563,3 +563,16 @@ footer.page-footer {
     font-size: 20px;
     margin-bottom: 30px;
 }
+
+#save-icon {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 50%, 0 100%);
+    background-color: lightgray;
+    display: block;
+    margin-left: 15px;
+    height: 25px;
+    width: 20px;
+}
+
+.save-active {
+    background-color: yellow !important;
+}
