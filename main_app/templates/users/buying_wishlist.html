@@ -29,6 +29,7 @@
                         <th>Brand</th>
                         <th>Price</th>
                         <th>Main Image</th>
+                        <th>Remove</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -37,7 +38,14 @@
                         <td style="width:250px; font-weight: normal;" class="teal-text"><a href="{% url 'products_detail' product.tcin %}">{{ product.title }}</a></td>
                         <td>{{ product.brand }}</td>
                         <td sylte="width: 380px">${{ product.price }}</td>
-                        <td><img src="{{product.main_image}}" style="height: 250px;"></td>
+                        <td><img src="{{product.main_image}}" style="height: 150px;"></td>
+                        <td>
+                            <a href="{% url 'products_favorite' product.tcin %}">
+                                <button class="btn-large waves-effect waves-light grey darken-3" type="submit" name="action" style="margin-bottom: 30px; width:200px; font-size: medium;">Remove
+                                    <i class="material-icons right grey darken-3">delete</i>
+                                </button>
+                            </a>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>

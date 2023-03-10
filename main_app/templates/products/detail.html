@@ -19,8 +19,7 @@
                 {% endfor %}
             </ul>
             <p>Target Link: <a href="{{ product_api.link }}">Link to Target</a></p>
-            <p>Favorite: <a href="{% url 'products_favorite' product_api.tcin %}" class="btn-flat btn-small waves-effect waves-light yellow">Add</a>
-            </p>
+            <p style="display:flex">Add to WishList: <a href="{% url 'products_favorite' product_api.tcin %}" id="save-icon" class="{% if product_db in user.wishlist_set.first.product.all %}save-active{% endif %}"></a></p>
         </div>
     </div>
 </div>
