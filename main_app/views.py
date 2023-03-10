@@ -40,8 +40,10 @@ def signup(request):
       # create a BuyOrder and a SalesOrder instance for this user once sign up
       buy_order = BuyOrder.objects.create(user=user)
       sales_order = SalesOrder.objects.create(user=user)
+      wishlist = WishList.objects.create(user=user)
       buy_order.save()
       sales_order.save()
+      wishlist.save()
       return redirect('/')
     else:
       error_message = 'Invalid sign up -try again'
@@ -398,4 +400,25 @@ def seller_listing(request, id):
   items = Item.objects.filter(sell_order=sales_order, status='listing').all()
   seller_rating = round(sum([review.rating for review in seller.sellerreview_set.all()]) / seller.sellerreview_set.all().count(), 2)
   return render(request, 'users/seller_listing.html', {'items': items, 'seller': seller, 'seller_rating': seller_rating})
+
+@login_required
+def products_favorite(request, tcin):
+    product = Product.objects.get(tcin=tcin)
+    user = request.user
+    wishlist = request.user.wishlist_set.first()
+    wishlist.product = product
+    # wishlist, created = WishList.objects.get_or_create(user=user)
+    # product.save()
+    # wishlist.product.add(product)
+    wishlist.save()
+    print(tcin, 'products_favorite')
+    return redirect('products_detail', tcin=tcin)
+
+@login_required
+def buying_wishlist(request):  
+    wishlist = request.user.wishlist_set.first()
+    print(wishlist, "This is wishlist products")
+    products = wishlist.product.all()
+    print(products, "this is items")
+    return render(request, 'users/buying_wishlist.html', {'products': products})
 
