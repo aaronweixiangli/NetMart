@@ -7,8 +7,7 @@ import math
 from datetime import date, timedelta
 from urllib.parse import unquote
 from django.shortcuts import render, redirect
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.views.generic import ListView, DetailView
+from django.views.generic.edit import DeleteView
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
@@ -86,11 +85,6 @@ def products_index(request):
   has_next_page = current_page * products_per_page < len(all_products)
   #Check if there is a previous page
   has_prev_page = current_page > 1
-
-  print(search_term)
-  print(type)
-  print(sort_by)
-  print(current_page)
   return render(request, 'products/index.html', {
     'products': products,
     'search_term': search_term,
@@ -178,12 +172,11 @@ def items_create(request, tcin):
     product = product
   )
   item.save()
-  seller_rating = sum([review.rating for review in item.seller.sellerreview_set.all()])
-  item.seller_rating = seller_rating
-  item.save()
+  if item.seller.sellerreview_set.all().count():
+    seller_rating = round(sum([review.rating for review in item.seller.sellerreview_set.all()]) / item.seller.sellerreview_set.all().count(), 2)
+    item.seller_rating = seller_rating
+    item.save()
   photo_files = request.FILES.getlist('url')
-  print(request.FILES)
-  print(photo_files)
   for photo_file in photo_files:
     if photo_file:
       s3 = boto3.client('s3')
@@ -390,7 +383,10 @@ def seller_reviews(request, id):
   seller = User.objects.get(id=id)
   sales_order = SalesOrder.objects.filter(user=seller).first()
   items = Item.objects.filter(sell_order=sales_order, status='completed', seller_review__isnull=False).all()
-  seller_rating = round(sum([review.rating for review in seller.sellerreview_set.all()]) / seller.sellerreview_set.all().count(), 2)
+  if seller.sellerreview_set.all().count():
+    seller_rating = round(sum([review.rating for review in seller.sellerreview_set.all()]) / seller.sellerreview_set.all().count(), 2)
+  else:
+    seller_rating = 'No Rating Yet'
   return render(request, 'users/seller_reviews.html', {'items': items, 'seller': seller, 'seller_rating': seller_rating})
 
 
@@ -398,27 +394,23 @@ def seller_listing(request, id):
   seller = User.objects.get(id=id)
   sales_order = SalesOrder.objects.filter(user=seller).first()
   items = Item.objects.filter(sell_order=sales_order, status='listing').all()
-  seller_rating = round(sum([review.rating for review in seller.sellerreview_set.all()]) / seller.sellerreview_set.all().count(), 2)
+  if seller.sellerreview_set.all().count():
+    seller_rating = round(sum([review.rating for review in seller.sellerreview_set.all()]) / seller.sellerreview_set.all().count(), 2)
+  else:
+    seller_rating = 'No Rating Yet'
   return render(request, 'users/seller_listing.html', {'items': items, 'seller': seller, 'seller_rating': seller_rating})
 
 @login_required
 def products_favorite(request, tcin):
     product = Product.objects.get(tcin=tcin)
-    user = request.user
     wishlist = request.user.wishlist_set.first()
-    wishlist.product = product
-    # wishlist, created = WishList.objects.get_or_create(user=user)
-    # product.save()
-    # wishlist.product.add(product)
+    wishlist.product.add(product)
     wishlist.save()
-    print(tcin, 'products_favorite')
     return redirect('products_detail', tcin=tcin)
 
 @login_required
 def buying_wishlist(request):  
     wishlist = request.user.wishlist_set.first()
-    print(wishlist, "This is wishlist products")
     products = wishlist.product.all()
-    print(products, "this is items")
     return render(request, 'users/buying_wishlist.html', {'products': products})
 

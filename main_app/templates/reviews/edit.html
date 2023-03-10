@@ -1,0 +1,33 @@
+{% extends 'base2.html' %}
+{% block content %}
+
+<main id="review-main" class="grey lighten-4">
+  <form id="add-review-form" method="POST" action="{% url 'reviews_update' item.id review.id %}">
+    {% csrf_token %}
+    <h3>
+      {{ item.title }}
+    </h3>
+    <h4>Seller: {{ item.seller.username }}</h4>
+    <h5>Price: ${{ item.sell_price }}</h5>
+    <h5>Description: {{ item.item_description }}</h5>
+    <h6>Rating: </h6>
+    <div class="input-field col s12">
+        <select style="display:block; font-size: 20px;" name="rating" required>
+          <option value="1" {% if review.rating == 1 %} selected {% endif %}>1</option>
+          <option value="2" {% if review.rating == 2 %} selected {% endif %}>2</option>
+          <option value="3" {% if review.rating == 3 %} selected {% endif %}>3</option>
+          <option value="4" {% if review.rating == 4 %} selected {% endif %}>4</option>
+          <option value="5" {% if review.rating == 5 %} selected {% endif %}>5</option>
+        </select>
+    </div>
+    <h6>Review: </h6>
+    <div>
+        <textarea id="review-content" name="review" placeholder="Write your review here" required>{{ review.review }}</textarea>
+    </div>
+    <button class="btn waves-effect waves-light" type="submit" style="width: 25%;">Edit
+        <i class="material-icons right">mode_edit</i>
+    </button>
+  </form>
+</main>
+
+{% endblock %}

@@ -83,10 +83,10 @@
                         <a href="{% url 'seller_reviews' item.seller_id %}">{{ item.seller.username }}</a>
                     </td>
                     <td>
-                        {% if item.seller_rating == 0 %}
-                        No Ratings
-                        {% else %}                        
+                        {% if item.seller_rating %}
                         {{ item.seller_rating }} 
+                        {% else %}                        
+                        No Rating Yet
                         {% endif %}
                     </td>
                     <td>{{ item.date_created }}</td>
