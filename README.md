@@ -100,5 +100,5 @@ Follow the easy to do steps to get started to sell your used gold here at NetMar
 [:x:] Price History Graph<br>
 [:x:] Animations to the Home Page<br>
 [:x:] Animations to the Technologies Page<br>
-[:x:] Search functionality within seller/shopper dashboard
+[:x:] Search functionality within seller/shopper dashboard<br>
 [:x:] Finish CRUD Functionality to Product Favorites
